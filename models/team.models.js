@@ -1,7 +1,9 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 // Team Schema
 const teamSchema = new mongoose.Schema({
  name: { type: String, required: true, unique: true }, // Team names must be unique
- description: { type: String } // Optional description forthe team
+ description: { type: String } // Optional description for the team
 });
-module.exports = mongoose.model('Team', teamSchema);
+const Team = mongoose.model('Team', teamSchema);
+
+export default Team;
