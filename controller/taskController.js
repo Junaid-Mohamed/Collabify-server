@@ -7,9 +7,10 @@ import User from "../models/user.models.js";
 
 export const createTask = async(req,res)=>{
     try{
-        const {project,team,owners,tags} = req.body;
+        const {projectName,team,owners,tags} = req.body;
+        // console.log(project);
         const relatedQueries = [];
-        relatedQueries.push(Project.findOne({name:project}));
+        relatedQueries.push(Project.findOne({name:projectName}));
         relatedQueries.push(Team.findOne({name:team}));
         relatedQueries.push(User.find({name:{$in:owners}}))
         relatedQueries.push(Tag.find({name:{$in: tags}}))
@@ -39,7 +40,7 @@ export const createTask = async(req,res)=>{
         }
         
         const newTask = new Task({
-            name:req.body.name,
+            name:req.body.taskName,
             project:projectData._id,
             team:teamData._id,
             owners: userData.map(user=>user._id),
@@ -58,47 +59,59 @@ export const createTask = async(req,res)=>{
 
 export const getAllTasks = async(req,res)=>{
     try{
-        const {owner, team, tags, project, status} = req.query;
+        const {owners, team, tags, project, status} = req.query;
+        console.log(`
+                Owner: ${owners}
+                team: ${team}
+                tags: ${tags}
+                project: ${project}
+                status: ${status}
+            `);
+        
         const filter = {};
         const relatedQueries = [];
 
-        if(owner){
-            relatedQueries.push(User.findOne({name:owner}))
+        if (owners) {
+            const ownerNames = owners.split(",");
+            const ownerDocs = await Promise.all(
+                ownerNames.map((o) => User.findOne({ name: o }))
+            );
+            const ownerIds = ownerDocs.filter(Boolean).map((o) => o._id);
+            if (ownerIds.length > 0) {
+                filter.owners = { $in: ownerIds };
+            }
         }
-        if(team){
-            relatedQueries.push(Team.findOne({name:team}))
-        }
-        if(project){
-            relatedQueries.push(Project.findOne({name:project}))
-        }
-        if(tags){
-            const tagNames = tags.split(',');
-            relatedQueries.push(Tag.find({name: {$in: tagNames}}))
-        }
-        
-        //  execute all related queries.
-        // const result = await Promise.all(relatedQueries);
 
-        const [ownerData,teamData,projectData,tagsData] = await Promise.all(relatedQueries)
-        if(ownerData){
-            filter.owners = ownerData._id;
-        }
-        if(teamData){
+        if (team) {
+            const teamData = await Team.findOne({ name: team });
+            if (!teamData) {
+                return res.status(404).json({ message: "Team not found" });
+            }
             filter.team = teamData._id;
         }
-        if(projectData){
+
+        if (project) {
+            const projectData = await Project.findOne({ name: project });
+            if (!projectData) {
+                return res.status(404).json({ message: "Project not found" });
+            }
             filter.project = projectData._id;
         }
-        if(tagsData){
-            filter.tags = {$in: tagsData.map(tag=>tag._id)}
+
+        if (tags) {
+            const tagNames = tags.split(",");
+            const tagDocs = await Tag.find({ name: { $in: tagNames } });
+            const tagIds = tagDocs.map((t) => t._id);
+            if (tagIds.length > 0) {
+                filter.tags = { $in: tagIds };
+            }
         }
 
-        // console.log(ownerData,teamData,projectData,tagsData)
-        // console.log(filter);
+
         if(status){
             filter.status = status
         }
-        
+        console.log('filter',filter)
         const allTasks = await Task.find(filter)
             .populate('tags','name -_id')
             .populate('team','name -_id')
@@ -107,6 +120,24 @@ export const getAllTasks = async(req,res)=>{
         res.status(200).json(allTasks);
     }catch(error){
         res.status(500).json({error:`Error fetching all tasks ${error.message}`});
+    }
+}
+
+export const getTaskById = async(req,res) => {
+    try{
+        const taskId = req.params.id;
+        const task = await Task.findById(taskId)
+            .populate('tags','name -_id')
+            .populate('team','name -_id')
+            .populate('owners','name -_id')
+            .populate('project','name -_id')
+        if(!task){
+            res.status(404).json({message: `Task not found`});
+            return;
+        }
+        res.status(200).json(task);
+    }catch(error){
+
     }
 }
 

@@ -29,42 +29,6 @@ export const taskPending = async(req,res)=>{
 
 export const reportClosedTasks = async(req,res)=>{
     try{
-        // const {groupBy} = req.query;
-        // const groupField = groupBy ? `$${groupBy}` : `$project`;
-
-        // const pipeline = [
-        //     {$match: {status: 'Completed'}},
-        //     groupBy === "owner" ? {$unwind:'$owners'} : null,
-        //     {
-        //         $group: {
-        //         _id:groupField,
-        //         closedTasksCount: {$sum:1},
-        //     },
-        // },
-        //   // Perform the lookup to get the actual data (team, owner, or project)
-        //   {
-        //     $lookup: {
-        //         from: groupBy === "owner" ? "User" : groupBy === "team" ? "Team" : "Project", // Lookup based on the groupBy value
-        //         localField: "_id", // This is the field from the $group stage that we are matching against
-        //         foreignField: "_id", // This is the field from the target collection that we are matching to
-        //         as: "details", // The result of the lookup will be stored in this new field
-        //     },
-        // },
-        // // Unwind the details field (because lookup returns an array of matched results)
-        // {
-        //     $unwind: "$details",
-        // },
-        // // Project the results to include the name from the details
-        // {
-        //     $project: {
-        //         _id: 0, // Hide the default _id field
-        //         name: "$details.name", // Replace _id with the name field from the lookup result
-        //         closedTasksCount: 1, // Include the closedTasksCount from the group stage
-        //     },
-        // },  
-        // ].filter(Boolean)
-        // const result = await Task.aggregate(pipeline);
-
         const groupBy = req.query.groupBy || 'team'; // Default to 'team' if no query param is provided
 
         let groupByField;

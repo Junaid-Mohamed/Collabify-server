@@ -21,3 +21,15 @@ export const getAllTags = async(req,res)=>{
         res.status(500).json({error:`error fethcing tags`,error})
     }
 }
+
+export const getAllTagNames = async(req,res)=>{
+    try{
+        const allTags = await Tag.find();
+        if(!allTags){
+            res.status(400).json({message:'no tags found'})
+        }
+        res.status(200).json(allTags.map(tag=> tag.name));
+    }catch(error){
+        res.status(500).json({error:`error fethcing tags`,error})
+    }
+}
