@@ -60,14 +60,6 @@ export const createTask = async(req,res)=>{
 export const getAllTasks = async(req,res)=>{
     try{
         const {owners, team, tags, project, status} = req.query;
-        console.log(`
-                Owner: ${owners}
-                team: ${team}
-                tags: ${tags}
-                project: ${project}
-                status: ${status}
-            `);
-        
         const filter = {};
         const relatedQueries = [];
 
