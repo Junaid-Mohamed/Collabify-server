@@ -103,7 +103,6 @@ export const getAllTasks = async(req,res)=>{
         if(status){
             filter.status = status
         }
-        console.log('filter',filter)
         const allTasks = await Task.find(filter)
             .populate('tags','name -_id')
             .populate('team','name -_id')

@@ -20,8 +20,10 @@ export const taskPending = async(req,res)=>{
     try{
         // Fetch total days of work pending for all tasks
         const pendingTasks = await Task.find({status: {$ne:`Completed`}})
+        const completedTasks = await Task.find({status: 'Completed'});
         const totalDaysWorkPending = pendingTasks.reduce((acc,curr)=>acc+curr.timeToComplete,0);
-        res.status(200).json({days:totalDaysWorkPending});
+        const totalDaysWorkCompleted = completedTasks.reduce((acc,curr)=>acc+curr.timeToComplete,0);
+        res.status(200).json({completed:totalDaysWorkCompleted, pending: totalDaysWorkPending});
     }catch(error){
         res.status(500).json({error:`something wrong in fetching pending tasks ${error.message}`,})
     }
