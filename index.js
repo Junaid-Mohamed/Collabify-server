@@ -21,6 +21,7 @@ import teamRoutes from "./routes/teamRoutes.js";
 
 app.use(express.json());
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight
 
 app.get('/',(req,res)=>{
     res.send("Hi World");
