@@ -4,6 +4,12 @@ import initializeDb from "./db.js";
 
 const app = express();
 
+const corsOptions = {
+    origin: 'https://workasana-client.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+};
+
 //  import routes
 import { verifyToken } from "./middleware/verifyToken.js";
 import authRoutes from './routes/authRoutes.js';
@@ -14,7 +20,7 @@ import taskRoutes from './routes/taskRoutes.js';
 import teamRoutes from "./routes/teamRoutes.js";
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.get('/',(req,res)=>{
     res.send("Hi World");
