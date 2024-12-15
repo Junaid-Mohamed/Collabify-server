@@ -3,9 +3,9 @@ import Task from "../models/task.models.js";
 
 export const taskCompletedLastWeek = async(req,res)=>{
     try{
-        const onWeekAgo = new Date();
-        onWeekAgo.setDate(onWeekAgo.getDate()-7)
-        const tasks = await Task.find({status:'Completed', updatedAt: {$gte: onWeekAgo}});
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate()-7)
+        const tasks = await Task.find({status:'Completed', updatedAt: {$gte: oneWeekAgo}});
         if(tasks.length === 0){
             res.status(400).json({message:'No tasks were completed last week'})
             return
