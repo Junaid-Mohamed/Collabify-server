@@ -5,7 +5,7 @@ import initializeDb from "./db.js";
 const app = express();
 
 const corsOptions = {
-    origin: 'https://workasana-client.vercel.app',
+    origin: 'https://collabify-client.vercel.app/',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
 };
